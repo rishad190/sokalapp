@@ -4,15 +4,18 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 export const CalenderNew = () => {
   const [date, setDate] = useState(new Date());
-  const [currentWeek, setCurrentWeek] = useState(new Date());
+  const [firstCurrentWeek, setFirstCurrentWeek] = useState();
+  const [isDataTrue, setIsDataTrue] = useState(true);
+  const [newWeek, setNewWeek] = useState();
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
-  let week = [];
+
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === "ios");
 
     setDate(currentDate);
+    handleNewWeek(currentDate);
   };
 
   const showMode = (currentMode) => {
@@ -22,18 +25,38 @@ export const CalenderNew = () => {
 
   const showDatepicker = () => {
     showMode("date");
+    handleCurrentWeek();
   };
-  if (currentWeek) {
-    let curr = currentWeek;
-
+  const handleCurrentWeek = () => {
+    let curr = new Date();
+    let week = [];
     for (let i = 1; i <= 7; i++) {
       let first = curr.getDate() - curr.getDay() + i;
       let day = new Date(curr.setDate(first)).toDateString().slice(0, 10);
       week.push(day);
     }
-  }
+    setFirstCurrentWeek(week);
+  };
+  const handleNewWeek = (dateData) => {
+    const isTrue = firstCurrentWeek?.some(
+      (week) => week === dateData.toDateString().slice(0, 10)
+    );
 
-  console.log(week);
+    if (isTrue === false) {
+      let curr = dateData;
+      let week = [];
+      for (let i = 1; i <= 7; i++) {
+        let first = curr.getDate() - curr.getDay() + i;
+        let day = new Date(curr.setDate(first)).toDateString().slice(0, 10);
+        week.push(day);
+      }
+      setNewWeek(week);
+      setIsDataTrue(isTrue);
+    } else {
+      console.log("error");
+    }
+  };
+
   return (
     <View>
       <View>
@@ -50,9 +73,22 @@ export const CalenderNew = () => {
           onChange={onChange}
         />
       )}
-      {week?.map((day, i) => (
+      {isDataTrue ? (
+        <View>
+          {firstCurrentWeek?.map((day, i) => (
+            <Text key={i}>{day}</Text>
+          ))}
+        </View>
+      ) : (
+        <View>
+          {newWeek?.map((day, i) => (
+            <Text key={i}>{day}</Text>
+          ))}
+        </View>
+      )}
+      {/* {week?.map((day, i) => (
         <Text key={i}>{day}</Text>
-      ))}
+      ))} */}
     </View>
   );
 };
