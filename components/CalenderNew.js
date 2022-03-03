@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { View, Button, Platform, Text } from "react-native";
+import { View, Button, Platform, Text, StyleSheet } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { timeData } from "./timeData";
+import TimePickerBox from "./TimePickerBox";
 
 export const CalenderNew = () => {
   const [date, setDate] = useState(new Date());
@@ -9,6 +11,7 @@ export const CalenderNew = () => {
   const [newWeek, setNewWeek] = useState();
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("");
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -76,7 +79,14 @@ export const CalenderNew = () => {
       {isDataTrue ? (
         <View>
           {firstCurrentWeek?.map((day, i) => (
-            <Text key={i}>{day}</Text>
+            <View key={i}>
+              <Text>{day}</Text>
+              <View style={styles.viewBox}>
+                <TimePickerBox />
+                <Text style={styles.textMargin}>TO</Text>
+                <TimePickerBox />
+              </View>
+            </View>
           ))}
         </View>
       ) : (
@@ -92,3 +102,12 @@ export const CalenderNew = () => {
     </View>
   );
 };
+const styles = StyleSheet.create({
+  viewBox: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  textMargin: {
+    margin: 10,
+  },
+});
